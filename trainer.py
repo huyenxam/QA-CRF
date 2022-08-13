@@ -148,10 +148,9 @@ class Trainer(object):
                 
                 # print(outputs)
                 for i in range(len(outputs)):
-                    predict = outputs[i][0]
-                    score = outputs[i][1]
+                    score = outputs[i]
 
-                    label_pre = get_pred_entity(predict=predict, score=score)
+                    label_pre = get_pred_entity(score=score)
                     print(label_pre)
                     labels.append(label_pre)
 
