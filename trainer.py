@@ -27,7 +27,7 @@ def get_pred_entity(score):
         if score[i][1] > score[i][0]:
             sum_score = score[i][1]
             for j in range(i,len(score)):
-                if score[j][1] > score[j][0]:
+                if score[j][1] <= score[j][0]:
                     break
                 sum_score += score[j][1]
             top_span.append(("ANSWER", i, j, sum_score))
@@ -151,7 +151,7 @@ class Trainer(object):
                     score = outputs[i]
 
                     label_pre = get_pred_entity(score=score)
-                    print(label_pre)
+                    # print(label_pre)
                     labels.append(label_pre)
 
         #         for i in range(len(output)):
@@ -168,15 +168,15 @@ class Trainer(object):
 
         #     eval_loss += loss.item()
 
-        # exact_match, f1 = evaluate(outputs, mode)
+        exact_match, f1 = evaluate(labels, mode)
 
-        # print()
-        # print(exact_match)
-        # print(f1)
+        print()
+        print(exact_match)
+        print(f1)
 
-        # if f1 > self.best_score:
-        #     self.save_model()
-        #     self.best_score = f1
+        if f1 > self.best_score:
+            self.save_model()
+            self.best_score = f1
 
     def save_model(self):
         checkpoint = {

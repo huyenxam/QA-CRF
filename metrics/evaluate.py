@@ -18,7 +18,7 @@ def evaluate(predictions, mode):
     list_sample = []                       # Danh sách các mẫu
     with open(path, 'r', encoding='utf8') as f: # Đọc file data
         list_sample = json.load(f)
-    list_sample = list_sample[:10]
+    # list_sample = list_sample[:10]
 
     for i, sample in enumerate(list_sample):
         context = sample['context'].split(' ')
