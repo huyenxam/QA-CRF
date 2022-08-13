@@ -11,8 +11,7 @@ export CHAR_EMBEDDING_DIM=100
 export CHAR_HIDDEN_DIM=200
 export NUM_BERT_LAYER=1
 export CHAR_VOCAB_SIZE=108
-export HIDDEN_DIM=948
-export HIDDEN_DIM_FFW=400
+export HIDDEN_DROPOUT_PROB=0.1  
 export NUM_LABELS=2
 export MODEL_NAME_OR_PATH="xlm-roberta-large"
 export NUM_EPOCHS=20
@@ -32,8 +31,7 @@ python train.py --train_path $TRAIN_PATH \
                 --char_hidden_dim $CHAR_HIDDEN_DIM \
                 --num_layer_bert $NUM_BERT_LAYER \
                 --char_vocab_size $CHAR_VOCAB_SIZE \
-                --hidden_dim $HIDDEN_DIM \
-                --hidden_dim_ffw $HIDDEN_DIM_FFW \
+                --hidden_dropout_prob $HIDDEN_DROPOUT_PROB \
                 --num_labels $NUM_LABELS \
                 --model_name_or_path $MODEL_NAME_OR_PATH \
                 --num_epochs $NUM_EPOCHS \

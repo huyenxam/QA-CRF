@@ -55,8 +55,7 @@ if __name__ == '__main__':
     parser.add_argument('--char_hidden_dim', default=200, type=int)
     parser.add_argument('--num_layer_bert', default=1, type=int)
     parser.add_argument('--char_vocab_size', default=108, type=int)
-    parser.add_argument('--hidden_dim', default=728, type=int)
-    parser.add_argument('--hidden_dim_ffw', default=400, type=int)
+    parser.add_argument('--hidden_dropout_prob', default=0.1, type=int)
     parser.add_argument('--num_labels', default=12, type=int)
     parser.add_argument('--model_name_or_path', type=str)
 
