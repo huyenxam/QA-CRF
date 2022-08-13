@@ -21,26 +21,22 @@ from tqdm import tqdm
 
 #     return top_span[0]
 
-def get_pred_entity(cate_pred, span_scores,label_set, is_flat_ner= True):
+def get_pred_entity(predict, score):
     top_span = []
-#     cate_pred = np.array(cate_pred)
-    cate_pred_upper = torch.triu(cate_pred, diagonal=0)
-#     max_val = torch.max(cate_pred_upper)
-    index_item = torch.where( cate_pred_upper > 0)
-    row = index_item[0]
-    col = index_item[1]
-    for i, j in zip(row, col):
-        i = i.item()
-        j = j.item()
-        tmp = (label_set[cate_pred[i][j].item()], i, j,span_scores[i][j].item())
-        top_span.append(tmp)
-
-    top_span = sorted(top_span, reverse=True, key=lambda x: x[3])
-    
+    for i in range(len(score)):
+        if predict[i] > 0:
+            sum_score = score[i]
+            for j in range(i,len(score)):
+                if predict[j] < 1:
+                    break
+                sum_score += score[j]
+            top_span.append(("ANSWER", i, j, sum_score))
     if not top_span:
         top_span = [('ANSWER', 0, 0)]
 
     return top_span[0]
+
+
 
 class Trainer(object):
     def __init__(self, args, train_dataset=None, dev_dataset=None, test_dataset=None):
@@ -135,7 +131,7 @@ class Trainer(object):
         self.model.eval()
 
         eval_loss = 0
-        # outputs = []
+        labels = []
         for batch in eval_dataloader:
             batch = tuple(t.to(self.device) for t in batch)
 
@@ -148,7 +144,15 @@ class Trainer(object):
             seq_length = batch[-3]
             with torch.no_grad():
                 outputs = self.model(**inputs)
-                print(outputs)
+                
+                # print(outputs)
+                for i in range(len(outputs)):
+                    predict = outputs[i][0]
+                    score = outputs[i][1]
+
+                    label_pre = get_pred_entity(predict=predict, score=score)
+                    print(label_pre)
+                    labels.append(label_pre)
 
         #         for i in range(len(output)):
         #             # out = output[i].max(dim=-1)
