@@ -4,7 +4,6 @@ from torch.utils.data import DataLoader, RandomSampler, SequentialSampler
 from transformers import AdamW, get_linear_schedule_with_warmup
 from model import BiaffineNER
 from tqdm import trange
-from dataloader import get_useful_ones, get_mask
 import os
 from tqdm import tqdm
 # def get_pred_entity(cate_pred, span_scores,label_set, is_flat_ner= True):
