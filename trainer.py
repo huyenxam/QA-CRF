@@ -138,7 +138,6 @@ class Trainer(object):
                       'attention_mask': batch[1],
                       'first_subword': batch[2],
                       'char_ids': batch[4],
-                      'labels': batch[-1]
                      }
 
             seq_length = batch[-3]

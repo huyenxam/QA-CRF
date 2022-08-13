@@ -40,24 +40,20 @@ class InputSample(object):
                 character = self.get_character(word, self.max_char_len)
                 char_seq.append(character)
 
-            labels = sample['label']
-            list_label = []
-            for lb in labels:
-                entity = lb[0]
-                start = lb[1] + len(question) + 2
-                end = lb[2] + len(question) + 2
-                
-                if end >= self.max_seq_length:
-                    end = self.max_seq_length - 1
+            label = sample['label'][0]
+            entity = label[0]
+            start =  label[1] + len(question) + 2
+            end = label[2] + len(question) + 2
+            if end >= self.max_seq_length:
+                end = self.max_seq_length - 1
 
-                if start >= self.max_seq_length - 1:
-                    start = 0
-                    end = 0
-
-                list_label.append([entity, start, end])
+            if start >= self.max_seq_length - 1:
+                start = 0
+                end = 0
+            
             qa_dict['context'] = context
             qa_dict['question'] = question
-            qa_dict['label_idx'] = list_label
+            qa_dict['label_idx'] = [entity, start, end]
             qa_dict['char_sequence'] = char_seq
             qa_dict['label'] = sample['label']
             l_sample.append(qa_dict)
@@ -145,30 +141,19 @@ class MyDataSet(Dataset):
             char_ids = char_ids[:max_seq_length]
         return torch.tensor(char_ids)
 
-    def span_maxtrix_label(self, label):        
-        start, end, entity = [], [], []
-        label = np.unique(label, axis=0).tolist()           # Loại bỏ những label trùng nhau
-        for lb in label:                                    # lặp qua từng label
-            if int(lb[1]) > self.max_seq_length or int(lb[2]) > self.max_seq_length:        # Nếu vị trí bd hoặc kết thúc lớn hơn max_seq_length thì chuyển thành vị trí (0, 0)
-                start.append(0)
-                end.append(0)
-            else:
-                start.append(int(lb[1]))
-                end.append(int(lb[2]))
-            try:
-                entity.append(self.label_2int[lb[0]])
-            except:
-                print(lb)
+    def span_maxtrix_label(self, label):   
+        start = int(label[1])
+        end = int(label[2])
+        en = label[0]
+        if start > self.max_seq_length or end > self.max_seq_length:       
+            start = 0
+            end = 0
+        try:
+            entity = self.label_2int[en]
+        except:
+            print(label)
         
-        label = torch.sparse.FloatTensor(torch.tensor([start, end], dtype=torch.int64), torch.tensor(entity),
-                                         torch.Size([self.max_seq_length, self.max_seq_length])).to_dense()
-        # Example: start = 2, end = 3, entity = 1, max_seq_length = 5
-        """ label = tensor([[0, 0, 0, 0, 0],
-                            [0, 0, 0, 0, 0],
-                            [0, 0, 0, 1, 0],
-                            [0, 0, 0, 0, 0],
-                            [0, 0, 0, 0, 0]])
-            label.shape = [max_seq_length, max_seq_length]"""
+        label = torch.Tensor([entity if i >= start and i <= end else 0 for i in range(self.max_seq_length)])
         return label
 
     def __getitem__(self, index):
