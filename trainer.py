@@ -6,6 +6,7 @@ from model import BiaffineNER
 from tqdm import trange
 import os
 from tqdm import tqdm
+
 # def get_pred_entity(cate_pred, span_scores,label_set, is_flat_ner= True):
 #     top_span = []
 #     for i in range(len(cate_pred)):
@@ -97,19 +98,23 @@ class Trainer(object):
                           'char_ids': batch[4],
                           'labels': batch[-1]
                          }
-                self.model.zero_grad()
 
-                output, loss = self.model(**inputs)
-                    
-                optimizer.zero_grad() 
-                loss.backward()
-                optimizer.step()
+                loss = self.model(**inputs)
                 train_loss += loss.item()
+
+                self.model.zero_grad()
+                loss.backward()
 
                 # norm gradient
                 torch.nn.utils.clip_grad_norm_(parameters=self.model.parameters(),
                                                 max_norm=self.args.max_grad_norm)
 
+                # optimizer.zero_grad() 
+                
+                optimizer.step()
+                
+
+                
                 # update learning rate
                 scheduler.step()
             print('train loss:', train_loss / len(train_dataloader))
@@ -130,7 +135,7 @@ class Trainer(object):
         self.model.eval()
 
         eval_loss = 0
-        outputs = []
+        # outputs = []
         for batch in eval_dataloader:
             batch = tuple(t.to(self.device) for t in batch)
 
@@ -142,31 +147,32 @@ class Trainer(object):
 
             seq_length = batch[-3]
             with torch.no_grad():
-                output, loss = self.model(**inputs)
+                outputs = self.model(**inputs)
+                print(outputs)
 
-                for i in range(len(output)):
-                    # out = output[i].max(dim=-1)
-                    true_len = seq_length[i]
-                    out = output[i][:true_len, :true_len]
+        #         for i in range(len(output)):
+        #             # out = output[i].max(dim=-1)
+        #             true_len = seq_length[i]
+        #             out = output[i][:true_len, :true_len]
                     
-                    input_tensor, cate_pred = out.max(dim=-1)
+        #             input_tensor, cate_pred = out.max(dim=-1)
                     
-                    label_pre = get_pred_entity(cate_pred, input_tensor, self.label_set, True)
-                    outputs.append(label_pre)
-                    # labels.append(label1)
-                    # print(label_pre)
+        #             label_pre = get_pred_entity(cate_pred, input_tensor, self.label_set, True)
+        #             outputs.append(label_pre)
+        #             # labels.append(label1)
+        #             # print(label_pre)
 
-            eval_loss += loss.item()
+        #     eval_loss += loss.item()
 
-        exact_match, f1 = evaluate(outputs, mode)
+        # exact_match, f1 = evaluate(outputs, mode)
 
-        print()
-        print(exact_match)
-        print(f1)
+        # print()
+        # print(exact_match)
+        # print(f1)
 
-        if f1 > self.best_score:
-            self.save_model()
-            self.best_score = f1
+        # if f1 > self.best_score:
+        #     self.save_model()
+        #     self.best_score = f1
 
     def save_model(self):
         checkpoint = {

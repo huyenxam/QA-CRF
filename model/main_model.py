@@ -30,10 +30,16 @@ class BiaffineNER(nn.Module):
         # x = [bs, max_sep, 768 + char_hidden_dim*2]
         logits = self.classifier(x)
         # x = [bs, max_seq, 2]
-        outputs = (logits, )
         if labels is not None:
             loss_mask = labels.gt(-1)
             loss = self.crf(logits, labels, loss_mask)*(-1)
-            outputs = (loss,) + outputs
-        return outputs
+            return loss
+        else:
+            return self.crf.decode(logits)
+        # outputs = (logits, )
+        # if labels is not None:
+        #     loss_mask = labels.gt(-1)
+        #     loss = self.crf(logits, labels, loss_mask)*(-1)
+        #     outputs = (loss,) + outputs
+        # return outputs
         
