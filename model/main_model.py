@@ -1,5 +1,5 @@
 from torch import nn
-from model.layer import WordRep, FeedforwardLayer, BiaffineLayer
+from model.layer import WordRep
 from transformers import AutoConfig
 from torchcrf import CRF
 
