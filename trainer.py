@@ -21,16 +21,17 @@ from tqdm import tqdm
 
 #     return top_span[0]
 
-def get_pred_entity(predict, score):
+def get_pred_entity(score):
     top_span = []
     for i in range(len(score)):
-        if predict[i] > 0:
-            sum_score = score[i]
+        if score[i][1] > score[i][0]:
+            sum_score = score[i][1]
             for j in range(i,len(score)):
-                if predict[j] < 1:
+                if score[j][1] > score[j][0]:
                     break
-                sum_score += score[j]
+                sum_score += score[j][1]
             top_span.append(("ANSWER", i, j, sum_score))
+    top_span = sorted(top_span, reverse=True, key=lambda x: x[3])
     if not top_span:
         top_span = [('ANSWER', 0, 0)]
 
