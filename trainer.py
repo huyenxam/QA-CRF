@@ -30,20 +30,20 @@ def get_pred_entity(score):
                 if score[j][1] <= score[j][0]:
                     break
                 sum_score += score[j][1]
-            top_span.append(("ANSWER", i, j, sum_score))
+            top_span.append(("ANSWER", i, j-1, sum_score))
     top_span = sorted(top_span, reverse=True, key=lambda x: x[3])
     if not top_span:
         top_span = [('ANSWER', 0, 0)]
 
     return top_span[0]
 
-# def get_pred_entity(score, predict):
+# def get_pred_entity(score, pred):
 #     top_span = []
 #     for i in range(len(score)):
-#         if predict[i] > 0:
+#         if pred[i] > 0:
 #             sum_score = score[i][1]
 #             for j in range(i,len(score)):
-#                 if predict[j] < 1:
+#                 if pred[j] < 1:
 #                     break
 #                 sum_score += score[j][1]
 #             top_span.append(("ANSWER", i, j-1, sum_score))
@@ -170,17 +170,18 @@ class Trainer(object):
                     # print(label_pre)
                     labels.append(label_pre)
 
-        #         for i in range(len(output)):
-        #             # out = output[i].max(dim=-1)
-        #             true_len = seq_length[i]
-        #             out = output[i][:true_len, :true_len]
-                    
-        #             input_tensor, cate_pred = out.max(dim=-1)
-                    
-        #             label_pre = get_pred_entity(cate_pred, input_tensor, self.label_set, True)
-        #             outputs.append(label_pre)
-        #             # labels.append(label1)
-        #             # print(label_pre)
+                # scores, outputs = self.model(**inputs)
+                
+                # # print(outputs)
+                # for i in range(len(outputs)):
+                #     score = scores[i]
+                #     pred = outputs[i]
+
+                #     label_pre = get_pred_entity(score=score, pred=pred)
+                #     # print(label_pre)
+                #     labels.append(label_pre)
+
+
 
         #     eval_loss += loss.item()
 
