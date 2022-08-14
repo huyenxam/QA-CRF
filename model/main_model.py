@@ -35,7 +35,9 @@ class BiaffineNER(nn.Module):
             loss = self.crf(scores, labels, loss_mask)*(-1)
             return loss
         else:
-            return scores
+            # return scores
+            outputs = self.crf.decode(scores)
+            return scores, outputs
             # outputs = self.crf.decode(scores)
             # return (outputs, scores)
         # outputs = (logits, )

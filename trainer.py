@@ -160,26 +160,26 @@ class Trainer(object):
 
             seq_length = batch[-3]
             with torch.no_grad():
-                outputs = self.model(**inputs)
-                
-                # print(outputs)
-                for i in range(len(outputs)):
-                    score = outputs[i]
-
-                    label_pre = get_pred_entity(score=score)
-                    # print(label_pre)
-                    labels.append(label_pre)
-
-                # scores, outputs = self.model(**inputs)
+                # outputs = self.model(**inputs)
                 
                 # # print(outputs)
                 # for i in range(len(outputs)):
-                #     score = scores[i]
-                #     pred = outputs[i]
+                #     score = outputs[i]
 
-                #     label_pre = get_pred_entity(score=score, pred=pred)
+                #     label_pre = get_pred_entity(score=score)
                 #     # print(label_pre)
                 #     labels.append(label_pre)
+
+                scores, outputs = self.model(**inputs)
+                
+                # print(outputs)
+                for i in range(len(outputs)):
+                    score = scores[i]
+                    pred = outputs[i]
+
+                    label_pre = get_pred_entity(score=score, pred=pred)
+                    # print(label_pre)
+                    labels.append(label_pre)
 
 
 
