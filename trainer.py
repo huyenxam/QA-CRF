@@ -21,37 +21,23 @@ from tqdm import tqdm
 
 #     return top_span[0]
 
-# def get_pred_entity(score):
-#     top_span = []
-#     for i in range(len(score)):
-#         if score[i][1] > score[i][0]:
-#             sum_score = score[i][1]
-#             for j in range(i,len(score)):
-#                 if score[j][1] <= score[j][0]:
-#                     break
-#                 sum_score += score[j][1]
-#             top_span.append(("ANSWER", i, j, sum_score))
-#     top_span = sorted(top_span, reverse=True, key=lambda x: x[3])
-#     if not top_span:
-#         top_span = [('ANSWER', 0, 0)]
-
-#     return top_span[0]
-
-def get_pred_entity(score, predict):
+def get_pred_entity(score):
     top_span = []
     for i in range(len(score)):
-        if predict[i] > 0:
-            sum_score = score[i]
+        if score[i][1] > score[i][0]:
+            sum_score = score[i][1]
             for j in range(i,len(score)):
-                if predict[i] < 1:
+                if score[j][1] <= score[j][0]:
                     break
-                sum_score += score[j]
+                sum_score += score[j][1]
             top_span.append(("ANSWER", i, j, sum_score))
     top_span = sorted(top_span, reverse=True, key=lambda x: x[3])
     if not top_span:
         top_span = [('ANSWER', 0, 0)]
 
     return top_span[0]
+
+
 
 class Trainer(object):
     def __init__(self, args, train_dataset=None, dev_dataset=None, test_dataset=None):
@@ -158,14 +144,13 @@ class Trainer(object):
 
             seq_length = batch[-3]
             with torch.no_grad():
-                scores, outputs = self.model(**inputs)
+                outputs = self.model(**inputs)
                 
                 # print(outputs)
                 for i in range(len(outputs)):
-                    score = scores[i]
-                    predict = outputs[i]
+                    score = outputs[i]
 
-                    label_pre = get_pred_entity(score=score, predict=predict)
+                    label_pre = get_pred_entity(score=score)
                     # print(label_pre)
                     labels.append(label_pre)
 
