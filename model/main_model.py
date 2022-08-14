@@ -32,7 +32,7 @@ class BiaffineNER(nn.Module):
         # x = [bs, max_seq, 2]
         if labels is not None:
             loss_mask = labels.gt(-1)
-            loss = self.crf(scores, labels, attention_mask)*(-1)
+            loss = self.crf(scores, labels, loss_mask)*(-1)
             return loss
         else:
             return scores
