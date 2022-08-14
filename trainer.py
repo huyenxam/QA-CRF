@@ -125,9 +125,6 @@ class Trainer(object):
                 # optimizer.zero_grad() 
                 
                 optimizer.step()
-                
-
-                
                 # update learning rate
                 scheduler.step()
             print('train loss:', train_loss / len(train_dataloader))
@@ -174,8 +171,9 @@ class Trainer(object):
                 
                 # print(outputs)
                 for i in range(len(outputs)):
-                    score = scores[i]
-                    pred = outputs[i]
+                    true_len = seq_length[i]
+                    score = scores[i][:true_len]
+                    pred = outputs[i][:true_len]
 
                     label_pre = get_pred_entity(score=score, pred=pred)
                     # print(label_pre)
