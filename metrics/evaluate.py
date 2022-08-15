@@ -39,8 +39,8 @@ def evaluate(predictions, mode):
             f1_idx.append(f1_score(label_prediction, ground_truth))
             extract_match_idx.append(exact_match_score(label_prediction, ground_truth))
 
-            # print(ground_truth)
-            # print(label_prediction)
+            print(ground_truth)
+            print(label_prediction)
 
 
         f1 += max(f1_idx)
