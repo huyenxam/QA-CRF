@@ -154,7 +154,7 @@ class MyDataSet(Dataset):
         except:
             print(label)
         
-        label = torch.Tensor([entity if i >= start and i <= end else 0 for i in range(self.max_seq_length)])
+        label = torch.Tensor([entity if i >= start and i <= end else 0 for i in range(self.max_seq_length)]).to(torch.int32)
         return label
 
     def __getitem__(self, index):
