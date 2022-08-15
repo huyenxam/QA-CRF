@@ -29,13 +29,21 @@ def evaluate(predictions, mode):
 
         f1_idx = [0]
         extract_match_idx = [0]
-        for lb in labels:
 
+        # start_pre = int(predictions[i][1])
+        # end_pre = int(predictions[i][2])
+        # label_prediction = " ".join(sentence[start_pre:end_pre+1])
+        label_prediction = ""
+        label_pred = predictions[i]
+        for label_pr in label_pred:
+            start_pre = int(label_pr[1])
+            end_pre = int(label_pr[2])
+            ans_pre = " ".join(sentence[start_pre:end_pre+1])
+            label_prediction = " ".join([label_prediction, ans_pre])
+        
+
+        for lb in labels:
             ground_truth = lb[3]
-            
-            start_pre = int(predictions[i][1])
-            end_pre = int(predictions[i][2])
-            label_prediction = " ".join(sentence[start_pre:end_pre+1])
             f1_idx.append(f1_score(label_prediction, ground_truth))
             extract_match_idx.append(exact_match_score(label_prediction, ground_truth))
 
