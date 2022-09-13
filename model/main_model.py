@@ -46,4 +46,3 @@ class BiaffineNER(nn.Module):
         #     loss = self.crf(logits, labels, loss_mask)*(-1)
         #     outputs = (loss,) + outputs
         # return outputs
-        
