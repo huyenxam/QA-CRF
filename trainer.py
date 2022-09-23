@@ -7,21 +7,36 @@ from tqdm import trange
 import os
 from tqdm import tqdm
 
-def get_pred_entity(score, pred):
-    top_span = []
-    for i in range(len(score)):
-        if pred[i] > 0:
-            sum_score = score[i][1]
-            for j in range(i,len(score)):
-                if pred[j] < 1:
-                    break
-                sum_score += score[j][1]
-            top_span.append(("ANSWER", i, j-1, sum_score))
-    top_span = sorted(top_span, reverse=True, key=lambda x: x[3])
-    if not top_span:
-        top_span = [('ANSWER', 0, 0)]
+def get_pred_entity(pred):
+    start = 0
+    end = 0
+    try:
+        idx1 = pred.index(1)
+        idx2 = 0
+    except:
+        idx1 = 0
+        try:
+            idx2 = pred.index(2)
+        except:
+            idx2 = 0
+    if idx1 != 0:
+        start = idx1
+        end = idx1
+        for i in range(idx1 + 1, len(pred)):
+            if pred[i] != 2:
+                break
+            else:
+                end = i
+    elif idx2 != 0:
+        start = idx2
+        end = idx2
+        for i in range(idx2 + 1, len(pred)):
+            if pred[i] != 2:
+                break
+            else:
+                end = i
 
-    return top_span
+    return [start, end]
 
 
 
@@ -129,29 +144,26 @@ class Trainer(object):
             with torch.no_grad():
                 scores, outputs = self.model(**inputs)
                 
-                # print(outputs)
                 for i in range(len(outputs)):
-                    # true_len = seq_length[i]
-                    # score = scores[i][:true_len]
-                    # pred = outputs[i][:true_len]
+                    true_len = seq_length[i]
+                    score = scores[i][:true_len]
+                    pred = outputs[i][:true_len]
 
-                    # label_pre = get_pred_entity(score=score, pred=pred)
-                    print(outputs[i])
-                    # labels.append(label_pre)
-
+                    label_pre = get_pred_entity(pred=pred)
+                    labels.append(label_pre)
 
 
-        #     eval_loss += loss.item()
+            # eval_loss += loss.item()
 
-        # exact_match, f1 = evaluate(labels, mode)
+        exact_match, f1 = evaluate(labels, mode)
 
-        # print()
-        # print(exact_match)
-        # print(f1)
+        print()
+        print(exact_match)
+        print(f1)
 
-        # if f1 > self.best_score:
-        #     self.save_model()
-        #     self.best_score = f1
+        if f1 > self.best_score:
+            self.save_model()
+            self.best_score = f1
 
     def save_model(self):
         checkpoint = {

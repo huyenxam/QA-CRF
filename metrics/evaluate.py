@@ -23,24 +23,15 @@ def evaluate(predictions, mode):
     for i, sample in enumerate(list_sample):
         context = sample['context'].split(' ')
         question = sample['question'].split(' ')
-        sentence = ['cls'] + question + ['sep'] + context + ['sep']
-
+        sentence = ['cls'] + question + ['sep'] + context
         labels = sample['label']
 
-        f1_idx = [0]
-        extract_match_idx = [0]
+        start_pre = predictions[i][0]
+        end_pre = predictions[i][1]
+        label_prediction = sentence[start_pre: end_pre+1]
 
-        # start_pre = int(predictions[i][1])
-        # end_pre = int(predictions[i][2])
-        # label_prediction = " ".join(sentence[start_pre:end_pre+1])
-        label_prediction = ""
-        label_pred = predictions[i]
-        for label_pr in label_pred:
-            start_pre = int(label_pr[1])
-            end_pre = int(label_pr[2])
-            ans_pre = " ".join(sentence[start_pre:end_pre+1])
-            label_prediction = " ".join([label_prediction, ans_pre])
-        
+        f1_idx = [0]
+        extract_match_idx = [0]        
 
         for lb in labels:
             ground_truth = lb[3]
