@@ -15,8 +15,10 @@ class BiaffineNER(nn.Module):
             self.lstm_input_size = self.lstm_input_size + 2 * args.char_hidden_dim
 
         self.word_rep = WordRep(args)
+        self.bilstm = nn.LSTM(input_size=self.lstm_input_size, hidden_size=args.hidden_dim // 2,
+                              num_layers=2, bidirectional=True, batch_first=True)
         self.dropout = nn.Dropout(self.hidden_dropout_prob)
-        self.classifier = nn.Linear(self.lstm_input_size, self.num_labels)
+        self.classifier = nn.Linear(args.hidden_dim , self.num_labels)
         self.crf = CRF(self.num_labels, batch_first=True)
 
 
@@ -26,8 +28,10 @@ class BiaffineNER(nn.Module):
                                       first_subword=first_subword,
                                       char_ids=char_ids)
         # x = [bs, max_sep, 768 + char_hidden_dim*2]
+        x, _ = self.bilstm(x)
+        # x = [bs, max_sep, hidden_dim]
         x = self.dropout(x)
-        # x = [bs, max_sep, 768 + char_hidden_dim*2]
+        # x = [bs, max_sep, hidden_dim]
         scores = self.classifier(x)
         # x = [bs, max_seq, 2]
         if labels is not None:
@@ -38,11 +42,3 @@ class BiaffineNER(nn.Module):
             # return scores
             outputs = self.crf.decode(scores)
             return scores, outputs
-            # outputs = self.crf.decode(scores)
-            # return (outputs, scores)
-        # outputs = (logits, )
-        # if labels is not None:
-        #     loss_mask = labels.gt(-1)
-        #     loss = self.crf(logits, labels, loss_mask)*(-1)
-        #     outputs = (loss,) + outputs
-        # return outputs

@@ -2,9 +2,6 @@ from transformers import AutoTokenizer
 from dataloader import MyDataSet
 from trainer import Trainer
 import argparse
-import torch
-import numpy as np
-import random
 
 def train(args):
     tokenizer = AutoTokenizer.from_pretrained(args.model_name_or_path)

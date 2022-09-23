@@ -128,8 +128,6 @@ class Trainer(object):
                                      num_workers=16)
 
         self.model.eval()
-
-        eval_loss = 0
         labels = []
         for batch in eval_dataloader:
             batch = tuple(t.to(self.device) for t in batch)
@@ -146,14 +144,10 @@ class Trainer(object):
                 
                 for i in range(len(outputs)):
                     true_len = seq_length[i]
-                    score = scores[i][:true_len]
                     pred = outputs[i][:true_len]
 
                     label_pre = get_pred_entity(pred=pred)
                     labels.append(label_pre)
-
-
-            # eval_loss += loss.item()
 
         exact_match, f1 = evaluate(labels, mode)
 

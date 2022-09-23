@@ -15,7 +15,7 @@ class WordRep(nn.Module):
             self.char_feature = CharCNN(hidden_dim=args.char_hidden_dim,
                                         vocab_size=args.char_vocab_size, embedding_dim=args.char_embedding_dim)
 
-    def forward(self, input_ids, attention_mask, first_subword,  char_ids):
+    def forward(self, input_ids, attention_mask, first_subword, char_ids):
         outputs = self.xlm_roberta(
             input_ids,
             attention_mask=attention_mask,
