@@ -40,7 +40,6 @@ class Trainer(object):
         self.dev_dataset = dev_dataset
         self.test_dataset = test_dataset
         self.best_score = 0
-        self.label_set = train_dataset.label_set
 
 
     def train(self):

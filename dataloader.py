@@ -15,7 +15,7 @@ class InputSample(object):
         self.list_sample = []                       # Danh sách các mẫu
         with open(path, 'r', encoding='utf8') as f: # Đọc file data
             self.list_sample = json.load(f)
-        # self.list_sample = self.list_sample[:10]
+        self.list_sample = self.list_sample[:10]
 
     def get_character(self, word, max_char_len):
         word_seq = []
@@ -46,20 +46,19 @@ class InputSample(object):
                 char_seq.append(character)
 
             label = sample['answers'][0]
-            start =  label[1] 
-            end = label[2] 
+            start =  label["start"] 
+            end = label["end"] 
 
             labels_idx = [self.label_2int['CLS']]
             labels_idx += [self.label_2int['B-Question'] if i == 0 else self.label_2int['I-Question'] for i in range(len(question))]
             labels_idx += [self.label_2int['SEP']]
             labels_idx += [self.label_2int['I-Answer'] if (i >= start and i <= end) else self.label_2int['O'] for i in range(len(context))]
-            labels_idx[len(question) + 2] = self.label_2int['B-Answer']
+            labels_idx[len(question) + 2 + start] = self.label_2int['B-Answer']
 
             qa_dict['context'] = context
             qa_dict['question'] = question
             qa_dict['label_idx'] = labels_idx
             qa_dict['char_sequence'] = char_seq
-            qa_dict['label'] = sample['label']
             l_sample.append(qa_dict)
 
         return l_sample
@@ -146,10 +145,13 @@ class MyDataSet(Dataset):
         char_seq = sample['char_sequence']
         seq_length = len(question) + len(context) + 2        
         input_ids, attention_mask, firstSWindices = self.preprocess(self.tokenizer, context, question, self.max_seq_length)
+        label = sample['label_idx']
         if len(label) > self.max_seq_length:
             label = label[:self.max_seq_length]
-        label = torch.Tensor(sample['label_idx']).to(torch.int32)
-
+        else:
+            label = label + [0] * (self.max_seq_length - len(label))
+        label = torch.Tensor(label).to(torch.int32)
+      
         char_ids = self.character2id(char_seq, max_seq_length=self.max_seq_length)
         if seq_length > self.max_seq_length:
           seq_length = self.max_seq_length
