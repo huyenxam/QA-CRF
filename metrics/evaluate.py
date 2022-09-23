@@ -28,7 +28,7 @@ def evaluate(predictions, mode):
 
         start_pre = predictions[i][0]
         end_pre = predictions[i][1]
-        label_prediction = sentence[start_pre: end_pre+1]
+        label_prediction = " ".join(sentence[start_pre:end_pre+1])
 
         f1_idx = [0]
         extract_match_idx = [0]        
