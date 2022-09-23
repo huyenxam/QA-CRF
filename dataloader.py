@@ -45,9 +45,9 @@ class InputSample(object):
                 character = self.get_character(word, self.max_char_len)
                 char_seq.append(character)
 
-            label = sample['answers'][0]
-            start =  label["start"] 
-            end = label["end"] 
+            label = sample['label'][0]
+            start =  int(label[1]) 
+            end = int(label[2])
 
             labels_idx = [self.label_2int['CLS']]
             labels_idx += [self.label_2int['B-Question'] if i == 0 else self.label_2int['I-Question'] for i in range(len(question))]
