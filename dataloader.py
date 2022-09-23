@@ -35,9 +35,9 @@ class InputSample(object):
             context = sample['context'].split(' ')
             question = sample['question'].split(' ')
             
-            max_seq = self.max_seq_length - len(question) - 3       
-            if len(context) > max_seq:
-                context = context[:max_seq]
+            # max_seq = self.max_seq_length - len(question) - 3       
+            # if len(context) > max_seq:
+            #     context = context[:max_seq]
 
             sent = question + context    
             char_seq = []
