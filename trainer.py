@@ -7,52 +7,6 @@ from tqdm import trange
 import os
 from tqdm import tqdm
 
-# def get_pred_entity(cate_pred, span_scores,label_set, is_flat_ner= True):
-#     top_span = []
-#     for i in range(len(cate_pred)):
-#         for j in range(i,len(cate_pred)):
-#             if cate_pred[i][j]>0:
-#                 tmp = (label_set[cate_pred[i][j].item()], i, j,span_scores[i][j].item())
-#                 top_span.append(tmp)
-#     top_span = sorted(top_span, reverse=True, key=lambda x: x[3])
-    
-#     if not top_span:
-#         top_span = [('ANSWER', 0, 0)]
-
-#     return top_span[0]
-
-# def get_pred_entity(score):
-#     top_span = []
-#     for i in range(len(score)):
-#         if score[i][1] > score[i][0]:
-#             sum_score = score[i][1]
-#             for j in range(i,len(score)):
-#                 if score[j][1] <= score[j][0]:
-#                     break
-#                 sum_score += score[j][1]
-#             top_span.append(("ANSWER", i, j-1, sum_score))
-#     top_span = sorted(top_span, reverse=True, key=lambda x: x[3])
-#     if not top_span:
-#         top_span = [('ANSWER', 0, 0)]
-
-#     return top_span[0]
-
-# def get_pred_entity(score, pred):
-#     top_span = []
-#     for i in range(len(score)):
-#         if pred[i] > 0:
-#             sum_score = score[i][1]
-#             for j in range(i,len(score)):
-#                 if pred[j] < 1:
-#                     break
-#                 sum_score += score[j][1]
-#             top_span.append(("ANSWER", i, j-1, sum_score))
-#     top_span = sorted(top_span, reverse=True, key=lambda x: x[3])
-#     if not top_span:
-#         top_span = [('ANSWER', 0, 0)]
-
-#     return top_span[0]  
-
 def get_pred_entity(score, pred):
     top_span = []
     for i in range(len(score)):
@@ -87,6 +41,7 @@ class Trainer(object):
         self.test_dataset = test_dataset
         self.best_score = 0
         self.label_set = train_dataset.label_set
+
 
     def train(self):
         train_sampler = RandomSampler(self.train_dataset)
@@ -173,41 +128,31 @@ class Trainer(object):
 
             seq_length = batch[-3]
             with torch.no_grad():
-                # outputs = self.model(**inputs)
-                
-                # # print(outputs)
-                # for i in range(len(outputs)):
-                #     score = outputs[i]
-
-                #     label_pre = get_pred_entity(score=score)
-                #     # print(label_pre)
-                #     labels.append(label_pre)
-
                 scores, outputs = self.model(**inputs)
                 
                 # print(outputs)
                 for i in range(len(outputs)):
-                    true_len = seq_length[i]
-                    score = scores[i][:true_len]
-                    pred = outputs[i][:true_len]
+                    # true_len = seq_length[i]
+                    # score = scores[i][:true_len]
+                    # pred = outputs[i][:true_len]
 
-                    label_pre = get_pred_entity(score=score, pred=pred)
-                    # print(label_pre)
-                    labels.append(label_pre)
+                    # label_pre = get_pred_entity(score=score, pred=pred)
+                    print(outputs[i])
+                    # labels.append(label_pre)
 
 
 
         #     eval_loss += loss.item()
 
-        exact_match, f1 = evaluate(labels, mode)
+        # exact_match, f1 = evaluate(labels, mode)
 
-        print()
-        print(exact_match)
-        print(f1)
+        # print()
+        # print(exact_match)
+        # print(f1)
 
-        if f1 > self.best_score:
-            self.save_model()
-            self.best_score = f1
+        # if f1 > self.best_score:
+        #     self.save_model()
+        #     self.best_score = f1
 
     def save_model(self):
         checkpoint = {
@@ -224,3 +169,7 @@ class Trainer(object):
         checkpoint = torch.load(path)
         self.model = checkpoint['model']
         self.model.load_state_dict(checkpoint['state_dict'])
+
+
+
+
