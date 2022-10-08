@@ -174,7 +174,3 @@ class Trainer(object):
         checkpoint = torch.load(path)
         self.model = checkpoint['model']
         self.model.load_state_dict(checkpoint['state_dict'])
-
-
-
-
