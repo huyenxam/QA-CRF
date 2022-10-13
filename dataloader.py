@@ -149,7 +149,7 @@ class MyDataSet(Dataset):
         if len(label) > self.max_seq_length:
             label = label[:self.max_seq_length]
         else:
-            label = label + [0] * (self.max_seq_length - len(label))
+            label = label + [7] * (self.max_seq_length - len(label))
         label = torch.Tensor(label).to(torch.int32)
       
         char_ids = self.character2id(char_seq, max_seq_length=self.max_seq_length)
