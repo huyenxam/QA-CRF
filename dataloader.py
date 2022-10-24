@@ -50,7 +50,7 @@ class InputSample(object):
             end = int(label[2])
 
             labels_idx = [self.label_2int['CLS']]
-            labels_idx += [self.label_2int['B-Question'] if i == 0 else self.label_2int['I-Question'] for i in range(len(question))]
+            labels_idx += [self.label_2int['I-Question'] if i == (len(question)-1) else self.label_2int['B-Question'] for i in range(len(question))]
             labels_idx += [self.label_2int['SEP']]
             labels_idx += [self.label_2int['I-Answer'] if (i >= start and i <= end) else self.label_2int['O'] for i in range(len(context))]
             labels_idx[len(question) + 2 + start] = self.label_2int['B-Answer']
